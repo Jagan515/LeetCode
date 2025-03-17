@@ -38,9 +38,7 @@ int main() {
 
 
 ## Problem 2
-You are given a sorted array `v` of integers and an integer `k`.  
-Your task is to find the smallest maximum value `pos` such that you can select `k` elements from the array following this condition:
-- You can select an element at index `i`, but the next selected element must be at index `i+2` or beyond.
+Given a sorted integer array v, which contains negative numbers, zeros, and positive numbers, find out whether the array has more negative numbers or more positive numbers, and return the maximum count among them.
 
 ## Solution
 
@@ -50,45 +48,57 @@ Your task is to find the smallest maximum value `pos` such that you can select `
 #include <algorithm>
 using namespace std;
 
-// Function to check if we can select `k` elements with max value <= `pos`
-bool check(vector<int> v, int pos, int k) {
-    int c = 0, i = 0;
-    int n = v.size();
 
-    while (i < n) {
-        if (v[i] <= pos) { // If current element is within limit
-            c++;           // Count it
-            i += 2;        // Skip next element
+// Finds the first index where the value is **non-negative** (i.e., v[i] >= 0).
+
+int lower(vector<int> v) {
+    int l = 0, r = v.size() - 1;
+    while (l <= r) {
+        int mid = l + (r - l) / 2; // Calculate midpoint
+        if (v[mid] < 0) {
+            l = mid + 1; // Move right if value is negative
         } else {
-            i++;
+            r = mid - 1; // Move left to find the first non-negative
         }
     }
-    return c >= k;
+    return l; // First index where v[i] >= 0
 }
 
-// Function to find the minimum max value using Binary Search
-int fun(vector<int> v, int k) {
-    int l = *min_element(v.begin(), v.end()); // Smallest value in array
-    int r = *max_element(v.begin(), v.end()); // Largest value in array
-    int mid, ans;
-    
+
+ // Finds the first index where the value is **strictly positive** (i.e., v[i] > 0).
+
+int upper(vector<int> v) {
+    int l = 0, r = v.size() - 1;
     while (l <= r) {
-        mid = l + (r - l) / 2;
-        if (check(v, mid, k)) { // If `k` elements can be chosen with `mid` as max value
-            ans = mid;  // Store the answer
-            r = mid - 1; // Try for a smaller max value
+        int mid = l + (r - l) / 2; // Calculate midpoint
+        if (v[mid] <= 0) {
+            l = mid + 1; // Move right if value is non-positive (negative or zero)
         } else {
-            l = mid + 1; // Increase the limit
+            r = mid - 1; // Move left to find the first positive
         }
     }
-    return ans;
+    return l; // First index where v[i] > 0
+}
+
+
+ Returns the maximum count of either negative or positive numbers.
+ 
+int maco(vector<int> v) {
+    int lb = lower(v); // Get count of negative numbers
+    int ub = upper(v); // Get index of first positive number
+    int s = v.size(); // Total size of the array
+    return max(lb, s - ub); // Compare negative count vs positive count
 }
 
 int main() {
-    vector<int> v = {2, 3, 5, 9}; // Given sorted array
-    int k = 2; // Number of elements to choose
-    int c = fun(v, k); // Find the answer
-    cout << c << endl; // Print result
+    vector<int> v = {-8, -6, -5, -4, -2, -1, 0, 0, 0, 0, 1, 2, 23, 44, 56}; // Input sorted array
+    int c = maco(v); // Get the max count of negative or positive numbers
+    cout << c << endl; // Output the result
+    return 0;
+}
+
+
+
 }
 ```
 
