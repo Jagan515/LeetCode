@@ -305,6 +305,41 @@ int main() {
 }
 ```
 
+### Problem 7 
+You are given an integer array nums consisting of 2 * n integers.
+
+You need to divide nums into n pairs such that:
+
+Each element belongs to exactly one pair.
+The elements present in a pair are equal.
+Return true if nums can be divided into n pairs, otherwise return false
+
+### Solution
+```cpp
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    bool divideArray(vector<int>& nums) {
+        vector<int> freq(501, 0); // Create an array of size 501 initialized to 0
+
+        // Count frequency of each number
+        for (int num : nums) {
+            freq[num]++;
+        }
+
+        // Check if each number appears an even number of times
+        for (int count : freq) {
+            if (count % 2 != 0) { // If any number appears an odd number of times, return false
+                return false;
+            }
+        }
+        return true; // If all numbers appear an even number of times, return true
+    }
+};
+```
+
 
 
 
